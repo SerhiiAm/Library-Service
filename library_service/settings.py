@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import sys
 import os
 from pathlib import Path
 from datetime import timedelta
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "debug_toolbar",
     "django_filters",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
@@ -49,6 +51,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -128,6 +131,11 @@ STATIC_ROOT = BASE_DIR / "files" / "static"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "files" / "media"
+
+IS_RUNNING_TESTS = "test" in sys.argv
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG and not IS_RUNNING_TESTS,
+}
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
