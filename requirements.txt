@@ -2,6 +2,8 @@ asgiref==3.12.1
 black==26.5.1
 click==8.5.0
 Django==6.1.1
+django-debug-toolbar==8.0.0
+django-filter==26.1
 djangorestframework==3.18.1
 djangorestframework_simplejwt==5.5.1
 mypy_extensions==1.1.0
