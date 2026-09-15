@@ -34,10 +34,8 @@ class BorrowingViewSet(
         queryset = self.queryset
         user = self.request.user
 
-
         if not user.is_staff:
             queryset = queryset.filter(user=user)
-
 
         user_id = self.request.query_params.get("user_id")
         is_active = self.request.query_params.get("is_active")
@@ -46,7 +44,6 @@ class BorrowingViewSet(
             queryset = queryset.filter(user_id=user_id)
 
         if is_active is not None:
-
             is_active_bool = is_active.lower() == "true"
             queryset = queryset.filter(actual_return_date__isnull=is_active_bool)
 
@@ -65,7 +62,6 @@ class BorrowingViewSet(
         with transaction.atomic():
             borrowing.actual_return_date = date.today()
             borrowing.save()
-
 
             book = borrowing.book
             book.inventory += 1

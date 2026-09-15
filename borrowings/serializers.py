@@ -29,14 +29,11 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         data = super().validate(attrs)
         book = attrs["book"]
 
-
         if book.inventory <= 0:
             raise ValidationError({"book": "This book is currently out of stock."})
 
         if attrs["expected_return_date"] < date.today():
             raise ValidationError({"expected_return_date": "Expected return date cannot be in the past."})
-
-
 
         return data
 
