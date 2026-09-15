@@ -24,7 +24,8 @@ from django.urls import include, path
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/users/", include("users.urls", namespace="users")),
-    path("api/", include("books.urls", namespace="books")),
+    path("api/books/", include("books.urls", namespace="books")),
+    path("api/borrowings/", include("borrowings.urls", namespace="borrowings")),
 ]
 urlpatterns += debug_toolbar_urls()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
