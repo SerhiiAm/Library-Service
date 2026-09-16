@@ -5,7 +5,8 @@ from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
+from payments.models import Payment
+from payments.stripe_utils import create_stripe_session
 from borrowings.models import Borrowing
 from borrowings.serializers import (
     BorrowingCreateSerializer,
@@ -50,8 +51,8 @@ class BorrowingViewSet(
         return queryset
 
     def perform_create(self, serializer):
-
-        serializer.save(user=self.request.user)
+        borrowing = serializer.save(user=self.request.user)
+        create_stripe_session(borrowing, self.request)
 
     @action(detail=True, methods=["post"], url_path="return")
     def return_borrowing(self, request, pk=None):
@@ -59,13 +60,24 @@ class BorrowingViewSet(
         serializer = self.get_serializer(borrowing, data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        today = date.today()
+
         with transaction.atomic():
-            borrowing.actual_return_date = date.today()
+            borrowing.actual_return_date = today
             borrowing.save()
 
             book = borrowing.book
             book.inventory += 1
             book.save()
+
+        if today > borrowing.expected_return_date:
+            extra_days = (today - borrowing.expected_return_date).days
+            create_stripe_session(
+                borrowing,
+                request,
+                payment_type=Payment.TypeChoices.FINE,
+                extra_days=extra_days,
+            )
 
         return Response(
             BorrowingSerializer(borrowing).data,
