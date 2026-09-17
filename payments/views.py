@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 from payments.models import Payment
 from payments.serializers import PaymentListSerializer, PaymentSerializer
+from notifications.telegram_bot import send_telegram_message
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -37,13 +38,19 @@ class PaymentViewSet(
             return Response({"error": "Session ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         payment = get_object_or_404(self.get_queryset(), session_id=session_id)
-        if not payment:
-            return Response({"error": "Payment not found"}, status=status.HTTP_404_NOT_FOUND)
 
         session = stripe.checkout.Session.retrieve(session_id)
         if session.payment_status == "paid":
             payment.status = Payment.StatusChoices.PAID
             payment.save()
+            message = (
+                f"<b>Payment Successful!</b>\n\n"
+                f"<b>Payment ID:</b> {payment.id}\n"
+                f"<b>User:</b> {payment.borrowing.user.email}\n"
+                f"<b>Amount:</b> ${payment.money_to_pay}\n"
+                f"<b>Type:</b> {payment.get_type_display()}"
+            )
+            send_telegram_message(message)
             return Response(
                 {"message": f"Payment #{payment.id} successful!"},
                 status=status.HTTP_200_OK,
