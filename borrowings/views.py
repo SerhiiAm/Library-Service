@@ -13,6 +13,7 @@ from borrowings.serializers import (
     BorrowingReturnSerializer,
     BorrowingSerializer,
 )
+from notifications.telegram_bot import send_telegram_message
 
 
 class BorrowingViewSet(
@@ -53,6 +54,14 @@ class BorrowingViewSet(
     def perform_create(self, serializer):
         borrowing = serializer.save(user=self.request.user)
         create_stripe_session(borrowing, self.request)
+        message = (
+            f"<b>New Borrowing Created!</b>\n\n"
+            f"<b>User:</b> {borrowing.user.email}\n"
+            f"<b>Book:</b> {borrowing.book.title}\n"
+            f"<b>Borrow Date:</b> {borrowing.borrow_date}\n"
+            f"<b>Expected Return:</b> {borrowing.expected_return_date}"
+        )
+        send_telegram_message(message)
 
     @action(detail=True, methods=["post"], url_path="return")
     def return_borrowing(self, request, pk=None):
@@ -78,6 +87,16 @@ class BorrowingViewSet(
                 payment_type=Payment.TypeChoices.FINE,
                 extra_days=extra_days,
             )
+        message = (
+            f"<b>Book Returned!</b>\n\n"
+            f"<b>User:</b> {borrowing.user.email}\n"
+            f"<b>Book:</b> {borrowing.book.title}\n"
+            f"<b>Actual Return Date:</b> {today}"
+        )
+        if today > borrowing.expected_return_date:
+            message += f"\n<b>Status:</b> Overdue! Fine session created."
+
+        send_telegram_message(message)
 
         return Response(
             BorrowingSerializer(borrowing).data,
