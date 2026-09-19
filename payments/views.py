@@ -35,7 +35,10 @@ class PaymentViewSet(
     def success(self, request):
         session_id = request.query_params.get("session_id")
         if not session_id:
-            return Response({"error": "Session ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Session ID is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         payment = get_object_or_404(self.get_queryset(), session_id=session_id)
 

@@ -100,7 +100,10 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator"
+        ),
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
@@ -137,6 +140,7 @@ MEDIA_ROOT = BASE_DIR / "files" / "media"
 IS_RUNNING_TESTS = "test" in sys.argv
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG and not IS_RUNNING_TESTS,
+    "IS_RUNNING_TESTS": False,
 }
 
 REST_FRAMEWORK = {
@@ -163,7 +167,10 @@ SIMPLE_JWT = {
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Library Service API",
-    "DESCRIPTION": "Online management system for book borrowings, payments, and notifications.",
+    "DESCRIPTION": (
+        "Online management system for book borrowings, "
+        "payments, and notifications."
+    ),
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "SWAGGER_UI_SETTINGS": {
