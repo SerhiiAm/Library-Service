@@ -94,7 +94,7 @@ class BorrowingViewSet(
             f"<b>Actual Return Date:</b> {today}"
         )
         if today > borrowing.expected_return_date:
-            message += f"\n<b>Status:</b> Overdue! Fine session created."
+            message += "\n<b>Status:</b> Overdue! Fine session created."
 
         send_telegram_message(message)
 

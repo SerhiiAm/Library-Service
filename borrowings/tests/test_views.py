@@ -67,7 +67,11 @@ class BorrowingViewSetTests(TestCase):
         response = self.client.get(BORROWINGS_URL)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.data["results"] if "results" in response.data else response.data
+        results = (
+            response.data["results"]
+            if "results" in response.data
+            else response.data
+        )
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]["id"], borrowing1.id)
 

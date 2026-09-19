@@ -29,7 +29,9 @@ class BorrowingModelTests(TestCase):
             user=self.user,
         )
 
-        expected_str = f"{self.book.title} ({self.user.email}) - {borrowing.borrow_date}"
+        expected_str = (
+            f"{self.book.title} ({self.user.email}) - {borrowing.borrow_date}"
+        )
         self.assertEqual(str(borrowing), expected_str)
 
     def test_is_active_property_when_not_returned(self):

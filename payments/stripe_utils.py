@@ -6,7 +6,9 @@ from payments.models import Payment
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
-def create_stripe_session(borrowing, request, payment_type=Payment.TypeChoices.PAYMENT, extra_days=0):
+def create_stripe_session(
+    borrowing, request, payment_type=Payment.TypeChoices.PAYMENT, extra_days=0
+):
     if payment_type == Payment.TypeChoices.PAYMENT:
         days = (borrowing.expected_return_date - borrowing.borrow_date).days or 1
         price = borrowing.book.daily_fee * days
@@ -17,8 +19,14 @@ def create_stripe_session(borrowing, request, payment_type=Payment.TypeChoices.P
 
     unit_amount = int(price * 100)
 
-    success_url = request.build_absolute_uri(reverse("payments:payment-success")) + "?session_id={CHECKOUT_SESSION_ID}"
-    cancel_url = request.build_absolute_uri(reverse("payments:payment-cancel")) + "?session_id={CHECKOUT_SESSION_ID}"
+    success_url = (
+            request.build_absolute_uri(reverse("payments:payment-success"))
+            + "?session_id={CHECKOUT_SESSION_ID}"
+    )
+    cancel_url = (
+            request.build_absolute_uri(reverse("payments:payment-cancel"))
+            + "?session_id={CHECKOUT_SESSION_ID}"
+    )
 
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],

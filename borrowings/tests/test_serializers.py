@@ -37,7 +37,6 @@ class BorrowingSerializerTests(TestCase):
         self.assertTrue(serializer.is_valid())
         serializer.save(user=self.user)
 
-
         self.book.refresh_from_db()
         self.assertEqual(self.book.inventory, 1)
 
@@ -55,7 +54,6 @@ class BorrowingSerializerTests(TestCase):
         }
         serializer = BorrowingCreateSerializer(data=payload)
 
-
         self.assertFalse(serializer.is_valid())
         self.assertIn("book", serializer.errors)
 
@@ -66,7 +64,6 @@ class BorrowingSerializerTests(TestCase):
             "expected_return_date": date.today() - timedelta(days=1),
         }
         serializer = BorrowingCreateSerializer(data=payload)
-
 
         self.assertFalse(serializer.is_valid())
         self.assertIn("expected_return_date", serializer.errors)
@@ -80,6 +77,5 @@ class BorrowingSerializerTests(TestCase):
             user=self.user,
         )
         serializer = BorrowingReturnSerializer(instance=borrowing, data={})
-
 
         self.assertFalse(serializer.is_valid())

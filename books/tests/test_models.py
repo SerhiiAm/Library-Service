@@ -17,7 +17,6 @@ class BookModelTests(TestCase):
             daily_fee=Decimal("1.99"),
         )
 
-
         self.assertEqual(str(book), "Clean Code - Robert C. Martin")
 
     def test_book_creation_with_default_cover(self):
@@ -28,7 +27,6 @@ class BookModelTests(TestCase):
             inventory=5,
             daily_fee=Decimal("2.50"),
         )
-
 
         self.assertEqual(book.cover, Book.CoverChoices.HARD)
         self.assertEqual(book.inventory, 5)
