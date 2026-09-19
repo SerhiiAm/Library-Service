@@ -137,6 +137,7 @@ MEDIA_ROOT = BASE_DIR / "files" / "media"
 IS_RUNNING_TESTS = "test" in sys.argv
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG and not IS_RUNNING_TESTS,
+    "IS_RUNNING_TESTS": False,
 }
 
 REST_FRAMEWORK = {
